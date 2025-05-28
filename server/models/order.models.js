@@ -13,7 +13,7 @@ const OrderSchema = new mongoose.Schema(
     },
     order_date: {
       type: Date,
-      required: true,
+      default: Date.now,
     },
     status: {
       type: String,

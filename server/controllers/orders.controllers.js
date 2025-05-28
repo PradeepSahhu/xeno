@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
 import { Order } from "../models/order.models.js";
 import { Customer } from "../models/customer.models.js";
-import produckerRun from "../Services/kafka/producker.kafka.js";
+import { orderProducer } from "../Services/kafka/producker.kafka.js";
 
 const addOrders = asyncHandler(async (req, res) => {
   const { amount, order_date, customerID } = req.body;
@@ -28,7 +28,7 @@ const addOrders = asyncHandler(async (req, res) => {
 
   const data = JSON.stringify({ customer: customerID, amount, order_date });
 
-  produckerRun(data);
+  await orderProducer(data);
 
   return res.status(201).json(new ApiResponse(200, {}, "Successfully ordered"));
 });

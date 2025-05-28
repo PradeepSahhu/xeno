@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/AsyncHandler.utils.js";
 import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
 import { Customer } from "../models/customer.models.js";
+import { consumrProducer } from "../Services/kafka/producker.kafka.js";
 
 const addCustomer = asyncHandler(async (req, res) => {
   const {
@@ -26,23 +27,25 @@ const addCustomer = asyncHandler(async (req, res) => {
 
   //-----------------------------------------------------
 
-  const cusmer = await Customer.create({
-    name,
-    email,
-    phone,
-    totalSpent,
-    totalVisits,
-    lastPurchaseDate,
-    lastActivityDate,
-    isActive,
-    createdDate,
-  });
+  // const cusmer = await Customer.create({
+  //   name,
+  //   email,
+  //   phone,
+  //   totalSpent,
+  //   totalVisits,
+  //   lastPurchaseDate,
+  //   lastActivityDate,
+  //   isActive,
+  //   createdDate,
+  // });
 
-  const createdCustomer = await Customer.findById(cusmer._id);
+  await consumrProducer("this is the consumer producer --------> ");
 
-  if (!createdCustomer) {
-    return new ApiError(400, "User not created");
-  }
+  // const createdCustomer = await Customer.findById(cusmer._id);
+
+  // if (!createdCustomer) {
+  //   return new ApiError(400, "User not created");
+  // }
   //----------------------------------------------------
 
   return res

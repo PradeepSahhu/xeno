@@ -4,6 +4,7 @@ import session from "express-session";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { app } from "./app.js";
 import DatabaseConnection from "./utils/DatabaseConnection.utils.js";
+import { connectKafkaProducker } from "./Services/kafka/producker.kafka.js";
 
 import dotenv from "dotenv";
 import { User } from "./models/users.models.js";
@@ -115,7 +116,9 @@ app.get("/logout", (req, res) => {
 });
 
 DatabaseConnection().then(() => {
-  app.listen(3000, () => {
-    console.log("server is running");
+  connectKafkaProducker().then(() => {
+    app.listen(3000, () => {
+      console.log("server is running");
+    });
   });
 });
