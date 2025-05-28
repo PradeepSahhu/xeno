@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/AsyncHandler.utils.js";
 import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
 import { Customer } from "../models/customer.models.js";
-import { consumrProducer } from "../Services/kafka/producker.kafka.js";
+import { customerProducer } from "../Services/kafka/producker.kafka.js";
 
 const addCustomer = asyncHandler(async (req, res) => {
   const {
@@ -21,7 +21,11 @@ const addCustomer = asyncHandler(async (req, res) => {
     return new ApiError(400, "All fields are required");
   }
 
-  console.log(req.body);
+  // add the comprehensive validation logic here.-----
+
+  //--------------------------------------
+
+  // console.log(req.body);
 
   // send it to the kafka for insertion in the database
 
@@ -39,7 +43,19 @@ const addCustomer = asyncHandler(async (req, res) => {
   //   createdDate,
   // });
 
-  await consumrProducer("this is the consumer producer --------> ");
+  const customer = {
+    name: name,
+    email: email,
+    phone: phone,
+    totalSpent: totalSpent,
+    totalVisits: totalVisits,
+    lastPurchaseDate: lastPurchaseDate,
+    lastActivityDate: lastActivityDate,
+    isActive: isActive,
+    createdDate: createdDate,
+  };
+
+  await customerProducer(JSON.stringify(customer));
 
   // const createdCustomer = await Customer.findById(cusmer._id);
 

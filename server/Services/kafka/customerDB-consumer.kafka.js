@@ -1,33 +1,51 @@
 import { Kafka } from "kafkajs";
 
-import { Order } from "../../models/order.models.js";
+import { Customer } from "../../models/customer.models.js";
+
 import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 
 const kafka = new Kafka({
-  clientId: "my-app",
+  clientId: "my-apps",
   brokers: ["localhost:9092"],
 });
 
-const consumer = kafka.consumer({ groupId: "test-group" });
+const consumer = kafka.consumer({ groupId: "customer-consumer-group" });
 
 const run = async () => {
   // Consuming
+
   await DatabaseConnection();
   await consumer.connect();
-  await consumer.subscribe({ topic: "quickstart-events", fromBeginning: true });
+  await consumer.subscribe({ topic: "customer-events", fromBeginning: true });
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message }) => {
       // it should send the data to the database.
 
-      const { amount, order_date, customer } = JSON.parse(message.value);
+      const {
+        name,
+        email,
+        phone,
+        totalSpent,
+        totalVisits,
+        lastPurchaseDate,
+        lastActivityDate,
+        isActive,
+        createdDate,
+      } = JSON.parse(message.value);
 
-      console.log(JSON.parse(message.value));
+      console.table(JSON.parse(message.value));
 
-      const order = await Order.create({
-        customer: customer,
-        amount,
-        order_date,
+      const customer = await Customer.create({
+        name,
+        email,
+        phone,
+        totalSpent,
+        totalVisits,
+        lastPurchaseDate,
+        lastActivityDate,
+        isActive,
+        createdDate,
       });
       console.log({
         partition,
@@ -35,7 +53,7 @@ const run = async () => {
         value: message.value?.toString(),
       });
 
-      const res = Order.findById(order._id);
+      const res = Customer.findById(customer._id);
 
       if (!res) {
         console.log("failed to push the data");

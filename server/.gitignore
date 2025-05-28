@@ -5,3 +5,5 @@ node_modules
 
 
 client_secret_229311082244-mlq9368cgheqgddfi04sabb8de4egcab.apps.googleusercontent.com.json
+
+.env-local

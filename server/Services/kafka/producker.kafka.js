@@ -37,10 +37,10 @@ const orderProducer = async (data) => {
   }
 };
 
-const consumrProducer = async (data) => {
+const customerProducer = async (data) => {
   try {
     await producer.send({
-      topic: "consumerDB-events",
+      topic: "customer-events",
       messages: [{ value: data }],
     });
   } catch (error) {
@@ -49,4 +49,4 @@ const consumrProducer = async (data) => {
 };
 
 // run().catch(console.error);
-export { connectKafkaProducker, orderProducer, consumrProducer };
+export { connectKafkaProducker, orderProducer, customerProducer };
