@@ -20,12 +20,12 @@ const run = async () => {
       // it should send the data to the database.
 
       DatabaseConnection().then(async () => {
-        const { amount, order_date, customerID } = JSON.parse(message.value);
+        const { amount, order_date, customer } = JSON.parse(message.value);
 
         console.log(JSON.parse(message.value));
 
         const order = await Order.create({
-          customer: customerID,
+          customer: customer,
           amount,
           order_date,
         });

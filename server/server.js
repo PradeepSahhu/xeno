@@ -114,8 +114,8 @@ app.get("/logout", (req, res) => {
   });
 });
 
-// DatabaseConnection().then(() => {
-app.listen(3000, () => {
-  console.log("server is running");
+DatabaseConnection().then(() => {
+  app.listen(3000, () => {
+    console.log("server is running");
+  });
 });
-// });
