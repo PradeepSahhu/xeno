@@ -5,6 +5,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { app } from "./app.js";
 import DatabaseConnection from "./utils/DatabaseConnection.utils.js";
 import { connectKafkaProducker } from "./Services/kafka/producker.kafka.js";
+import cors from "cors";
 
 import dotenv from "dotenv";
 import { User } from "./models/users.models.js";
@@ -12,6 +13,7 @@ dotenv.config();
 // const app = express();
 
 console.log(process.env.GOOGLE_CLIENT_ID);
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use(
   session({
@@ -29,25 +31,28 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/callback",
+      callbackURL: "http://localhost:4000/auth/google/callback",
     },
     async (accesstoken, refreshToken, profile, done) => {
       // can store this data in db.
 
       try {
+        console.log(profile);
         let usr = await User.findOne({ googleId: profile.id });
-        console.log("the user is : " + usr);
+        // console.log("the user is : " + usr);
 
         if (usr) {
           usr.lastLogin = new Date();
           await usr.save();
           return done(null, usr);
         }
-        console.log("this is the route");
+        // console.log("this is the route");
+        console.log("the profile picture is : " + profile.photos[0].value);
 
         usr = new User({
           googleId: profile.id,
           name: profile.displayName,
+          profileImage: profile.photos[0].value,
           email: profile.emails[0].value,
           lastLogin: new Date(),
           createdAt: new Date(),
@@ -67,8 +72,6 @@ passport.use(
       //   console.log(profile.displayName);
       //   console.log(profile.emails);
       //   console.log(profile.id);
-
-      return done(null, savedUser);
     }
   )
 );
@@ -99,14 +102,25 @@ app.get(
 
 app.get(
   "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
+  passport.authenticate("google", {
+    failureRedirect: "http://localhost:3000/",
+  }),
   (req, res) => {
-    res.redirect("/profile");
+    // res.redirect("/profile");
+
+    // res.status(200).json()
+    res.redirect("http://localhost:3000/campaignCreation");
   }
 );
 
 app.get("/profile", (req, res) => {
-  res.send(`Welcome ${req.user.name}`);
+  // res.send(`Welcome ${req.user.name}`);
+
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  console.log("someone is fetching from here");
+  return res.status(200).json(req.user);
 });
 
 app.get("/logout", (req, res) => {
@@ -117,7 +131,7 @@ app.get("/logout", (req, res) => {
 
 DatabaseConnection().then(() => {
   connectKafkaProducker().then(() => {
-    app.listen(3000, () => {
+    app.listen(4000, () => {
       console.log("server is running");
     });
   });

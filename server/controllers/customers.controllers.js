@@ -55,6 +55,12 @@ const addCustomer = asyncHandler(async (req, res) => {
     createdDate: createdDate,
   };
 
+  const existingCustomer = await Customer.findOne({ email: email });
+
+  if (existingCustomer) {
+    return new ApiError(400, "Customer already exist with the same email id");
+  }
+
   await customerProducer(JSON.stringify(customer));
 
   // const createdCustomer = await Customer.findById(cusmer._id);
