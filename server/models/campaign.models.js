@@ -2,16 +2,20 @@ import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema(
   {
-    segment: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Segment",
-      required: true,
-    },
     name: {
       type: String,
+      required: true,
     },
     message: {
       type: String,
+      required: true,
+    },
+    rule: {
+      type: Object,
+      required: true,
+    },
+    audienceSize: {
+      type: Number,
       required: true,
     },
     sentCount: {

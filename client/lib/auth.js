@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-export default async function Auth() {
-  const headerList = await headers();
+export default function Auth() {
+  const headerList = headers();
 
   const cookieHeader = headerList.get("cookie");
 

@@ -1,6 +1,5 @@
 // import type { Field, RuleType } from 'react-querybuilder';
 import { defaultOperators, toFullOption } from "react-querybuilder";
-import { musicalInstruments } from "./musicalInstruments";
 
 export const validator = (r) => !!r.value;
 
@@ -114,7 +113,12 @@ export const fields = [
     defaultOperator: "beginsWith",
     validator,
   },
-
+  {
+    name: "phoneNumber",
+    label: "Phone Number",
+    inputType: "number",
+    validator,
+  },
   { name: "totalSpent", label: "Total Spend", inputType: "number", validator },
   {
     name: "totalVisits",
@@ -124,8 +128,30 @@ export const fields = [
   },
   {
     name: "inactive",
-    label: "Inactive For",
+    label: "Inactive",
     inputType: "date",
     datatype: "date",
+  },
+  {
+    name: "lastPurchased",
+    label: "Last Purchased",
+    defaultOperator: "<=",
+    inputType: "date",
+    datatype: "date",
+  },
+  {
+    name: "createdAt",
+    label: "Created",
+    defaultOperator: "<",
+    inputType: "date",
+    datatype: "date",
+  },
+  {
+    name: "isActive",
+    label: "Active",
+    defaultOperator: "=",
+    placeholder: "Yes/No",
+    datatype: "date",
+    validator,
   },
 ].map((o) => toFullOption(o));
