@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { QueryBuilderDnD } from "@react-querybuilder/dnd";
 import * as ReactDnD from "react-dnd";
@@ -8,15 +9,21 @@ import { fields } from "./fields";
 import "react-querybuilder/dist/query-builder.css";
 import "./styles.css";
 import styles from "./queryBuilderStyle";
+import { useRouter } from "next/navigation";
+import { useUser } from "./userContext";
 
 const initialQuery = { combinator: "and", rules: [] };
 
-const Query = () => {
+const Query = ({ path }) => {
+  const user = useUser();
+  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [campaignInfo, setCampaignInfo] = useState({
     campaignName: "",
     audienceSize: 0,
   });
+
+  const [loading, setLoading] = useState(false);
 
   const generateRandomAudienceSize = () => {
     const value = Math.floor(Math.random() * 5000) + 100;
@@ -35,8 +42,44 @@ const Query = () => {
     setQuery(newQuery);
   };
 
-  const handleButtonSubmission = () => {
+  const handleButtonSubmission = async () => {
     // Handle form submission
+
+    console.table([query]);
+
+    // setLoading(true);
+
+    const CampaignData = {
+      name: campaignInfo.campaignName,
+      rule: query,
+      audienceSize: campaignInfo.audienceSize,
+      sendCount: 12,
+      failedCount: 0,
+      createdBy: user.name,
+    };
+
+    try {
+      const res = await fetch(
+        "http://localhost:4000/api/campaign/addCampaign",
+        {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify(CampaignData),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // console.log([campaignInfo]);
+
+      router.push(path);
+
+      // setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // redirect("./campaignHistory");
   };
 
   return (
@@ -91,7 +134,7 @@ const Query = () => {
             className="bg-gray-600 px-5 py-3 text-white rounded-xl hover:bg-gray-700 w-full sm:w-auto"
             onClick={handleButtonSubmission}
           >
-            Save
+            {loading ? "......" : "Save"}
           </button>
         </div>
       </div>

@@ -5,15 +5,15 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { app } from "./app.js";
 import DatabaseConnection from "./utils/DatabaseConnection.utils.js";
 import { connectKafkaProducker } from "./Services/kafka/producker.kafka.js";
-import cors from "cors";
 
 import dotenv from "dotenv";
 import { User } from "./models/users.models.js";
 dotenv.config();
+
+const PORT = 4000;
 // const app = express();
 
 console.log(process.env.GOOGLE_CLIENT_ID);
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use(
   session({
@@ -103,13 +103,13 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000/",
+    failureRedirect: "http://localhost:3001/",
   }),
   (req, res) => {
     // res.redirect("/profile");
 
     // res.status(200).json()
-    res.redirect("http://localhost:3000/campaignCreation");
+    res.redirect("http://localhost:3001/campaignCreation");
   }
 );
 
@@ -131,8 +131,8 @@ app.get("/logout", (req, res) => {
 
 DatabaseConnection().then(() => {
   connectKafkaProducker().then(() => {
-    app.listen(4000, () => {
-      console.log("server is running");
+    app.listen(PORT, () => {
+      console.log(`server is running on PORT ${PORT}`);
     });
   });
 });

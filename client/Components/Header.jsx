@@ -1,23 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useUser } from "./userContext";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
+  const user = useUser();
+  // const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:4000/profile", {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Not logged in");
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        setUser(data);
-      })
-      .catch((err) => console.error(err));
+    //   fetch("http://localhost:4000/profile", {
+    //     credentials: "include",
+    //   })
+    //     .then((res) => {
+    //       if (!res.ok) throw new Error("Not logged in");
+    //       return res.json();
+    //     })
+    //     .then((data) => {
+    //       console.log(data);
+    //       setUser(data);
+    //     })
+    //     .catch((err) => console.error(err));
+    // console.log(us.name);
+    // setUser(us.name);
   }, []);
   return (
     <div className="bg-white border-b border-gray-200">
@@ -39,7 +43,7 @@ const Header = () => {
             </button>
             <img
               className="w-8 h-8 bg-gray-300 rounded-full"
-              src={user ? user.profileImage : ""}
+              src={user ? user.profileImage : null}
             />
           </div>
         </div>

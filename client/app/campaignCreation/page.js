@@ -1,8 +1,9 @@
 "use client";
 import Query from "@/Components/Query";
 
-export default async function Home() {
+export default function Home() {
   //   await Auth();
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -30,7 +31,7 @@ export default async function Home() {
       </div> */}
 
       <div className="">
-        <Query />
+        <Query path={`./campaignHistory`} />
       </div>
 
       <div className="bg-white h-[100vh] text-white">This is the home page</div>

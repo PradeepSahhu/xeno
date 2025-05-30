@@ -1,9 +1,9 @@
-import { Campaign } from "../models/campaign.models";
+import { Campaign } from "../models/campaign.models.js";
 import { asyncHandler } from "../utils/AsyncHandler.utils.js";
 import { ApiError } from "../utils/ApiError.utils.js";
 import { ApiResponse } from "../utils/ApiResponse.utils.js";
 
-const addCampaign = async (req, res) => {
+const addCampaign = asyncHandler(async (req, res) => {
   const {
     name,
     message,
@@ -11,27 +11,28 @@ const addCampaign = async (req, res) => {
     audienceSize,
     sentCount = 0,
     failedCount = 0,
-    created_by,
+    createdBy,
   } = req.body;
 
+  console.table(req.body);
+
   if (!name || !rule) {
-    return ApiError(401, "Name or rule can't be empty");
+    return new ApiError(400, "Name or rule can't be empty");
   }
 
   const existingCampaign = await Campaign.findOne({ name: name });
 
   if (existingCampaign) {
-    return ApiError(401, "Campaign with same name already exists");
+    return new ApiError(401, "Campaign with same name already exists");
   }
 
   const campaign = await Campaign.create({
     name,
-    message,
     rule,
     audienceSize,
     sentCount,
     failedCount,
-    created_by,
+    createdBy,
   });
 
   const isCeatedCampaign = await Campaign.findById(campaign?._id);
@@ -39,19 +40,23 @@ const addCampaign = async (req, res) => {
   if (!isCeatedCampaign) {
     return ApiError(401, "Unable to create the Campaign something went wrong");
   }
-  return res.status(200).json({ campaign });
-};
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Added Campaign Successfully"));
+});
 
-const getAllCampaign = async (req, res) => {
+const getAllCampaign = asyncHandler(async (req, res) => {
   const campaign = await Campaign.find({});
 
   if (!campaign) {
-    return ApiError(401, "Unable to find anyting in the database");
+    return new ApiError(401, "Unable to find anyting in the database");
   }
+
+  console.log(campaign);
 
   return res
     .status(200)
     .json(new ApiResponse(200, campaign, "Successfully found the campaigns"));
-};
+});
 
 export { addCampaign, getAllCampaign };

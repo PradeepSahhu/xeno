@@ -6,10 +6,6 @@ const campaignSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    message: {
-      type: String,
-      required: true,
-    },
     rule: {
       type: Object,
       required: true,
@@ -26,12 +22,9 @@ const campaignSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    created_by: {
+    createdBy: {
       type: String,
       required: true,
-    },
-    created_at: {
-      type: Date,
     },
   },
   {
