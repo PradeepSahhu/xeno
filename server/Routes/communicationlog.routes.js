@@ -3,6 +3,6 @@ import { getCampaignById } from "../controllers/communicationLog.controllers.js"
 
 const router = Router();
 
-router.route("/getCampaign").get(getCampaignById);
+router.route("/getCampaign/:campaignId").get(getCampaignById);
 
 export default router;

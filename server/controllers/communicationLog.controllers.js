@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.utils.js";
 import { CommunicationLog } from "../models/communicationLog.models.js";
 
 const getCampaignById = asyncHandler(async (req, res) => {
-  const { campaignId } = req.body;
+  const { campaignId } = req.params;
   console.log("this function is working");
 
   if (!campaignId) {
