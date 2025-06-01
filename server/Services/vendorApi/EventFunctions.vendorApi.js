@@ -58,7 +58,11 @@ const PerformSendingMessages = async (
 
   if (communicationExist) {
     if (communicationExist.message.length < campaign.audienceSize) {
-      communicationExist.message.push(...messagesArray);
+      const remainingArray = messagesArray.slice(
+        0,
+        campaign.audienceSize - communicationExist.message.length
+      );
+      communicationExist.message.push(...remainingArray);
     }
 
     await communicationExist.save();
@@ -69,7 +73,7 @@ const PerformSendingMessages = async (
   } else {
     const res = await CommunicationLog.create({
       campaign: campaign?._id || CampaignID,
-      message: messagesArray,
+      message: messagesArray.slice(0, campaign.audienceSize),
     });
 
     if (res.ok) {
