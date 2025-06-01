@@ -26,7 +26,7 @@ const Query = ({ path }) => {
   const [loading, setLoading] = useState(false);
 
   const generateRandomAudienceSize = () => {
-    const value = Math.floor(Math.random() * 5000) + 100;
+    const value = Math.floor(Math.random() * 101);
     setCampaignInfo((prevValue) => ({ ...prevValue, audienceSize: value }));
   };
 
@@ -53,7 +53,7 @@ const Query = ({ path }) => {
       name: campaignInfo.campaignName,
       rule: query,
       audienceSize: campaignInfo.audienceSize,
-      sendCount: 12,
+      sendCount: 0,
       failedCount: 0,
       createdBy: user.name,
     };

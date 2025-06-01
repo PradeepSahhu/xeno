@@ -14,14 +14,6 @@ const campaignSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    sentCount: {
-      type: Number,
-      default: 0,
-    },
-    failedCount: {
-      type: Number,
-      default: 0,
-    },
     createdBy: {
       type: String,
       required: true,

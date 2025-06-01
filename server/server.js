@@ -103,13 +103,13 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3001/",
+    failureRedirect: "http://localhost:3000/",
   }),
   (req, res) => {
     // res.redirect("/profile");
 
     // res.status(200).json()
-    res.redirect("http://localhost:3001/campaignCreation");
+    res.redirect("http://localhost:3000/campaignCreation");
   }
 );
 

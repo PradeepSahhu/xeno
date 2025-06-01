@@ -3,7 +3,7 @@ import { CommunicationLog } from "../../models/communicationLog.models.js";
 import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 import { getGeminiResponse } from "../AI/GeminiConnection.ai.js";
 
-const FetchTheCampaignRecord = async (
+const PerformSendingMessages = async (
   CampaignID = "6839bb85bdff80eb5539be2d"
 ) => {
   console.log("Fetching the campaign Record");
@@ -12,7 +12,11 @@ const FetchTheCampaignRecord = async (
 
   const campaign = await Campaign.findById(CampaignID);
 
-  const res = await getGeminiResponse();
+  const res = await getGeminiResponse(
+    campaign.audienceSize,
+    campaign.name,
+    campaign.rule
+  );
 
   //   const result = JSON.parse(res.candidates[0].content);
   //   console.table(res.candidates[0].content);
@@ -46,26 +50,35 @@ const FetchTheCampaignRecord = async (
     }));
   }
 
-  if (communicationExist.message.length < campaign.audienceSize) {
-    communicationExist.message.push(...messagesArray);
+  // if (communicationExist.message.length < campaign.audienceSize) {
+  //   communicationExist.message.push(...messagesArray);
+  // }
+  // await communicationExist.save();
+  // console.log("saving completed");
+
+  if (communicationExist) {
+    if (communicationExist.message.length < campaign.audienceSize) {
+      communicationExist.message.push(...messagesArray);
+    }
+
+    await communicationExist.save();
+
+    console.log("saving completed");
+
+    return;
+  } else {
+    const res = await CommunicationLog.create({
+      campaign: campaign?._id || CampaignID,
+      message: messagesArray,
+    });
+
+    if (res.ok) {
+      console.log(
+        "Successfully created a new CommunicationLog for " + CampaignID
+      );
+    }
   }
-  await communicationExist.save();
-  console.log("saving completed");
-
-  //   if (communicationExist) {
-  //     if (communicationExist.message.length < campaign.audienceCount) {
-  //       communicationExist.message.push(...messagesArray);
-  //     }
-  //     await communicationExist.save();
-  //     console.log("saving completed");
-
-  //     return;
-  //   } else {
-  //     const res = await CommunicationLog.create({
-  //       campaign: campaign?._id || CampaignID,
-  //       message: messagesArray,
-  //     });
-  //   }
 };
 
-FetchTheCampaignRecord();
+// PerformSendingMessages();
+export { PerformSendingMessages };
