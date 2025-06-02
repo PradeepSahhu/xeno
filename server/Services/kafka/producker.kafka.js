@@ -3,7 +3,7 @@ import { Kafka } from "kafkajs";
 // // the kafka client
 const kafka = new Kafka({
   clientId: "my-app",
-  brokers: ["localhost:9092"],
+  brokers: [process.env.KAFKA_BROKER_URL, "localhost:9092"],
 });
 
 const producer = kafka.producer();
