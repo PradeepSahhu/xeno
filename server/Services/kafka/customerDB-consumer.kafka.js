@@ -4,7 +4,9 @@ import { Customer } from "../../models/customer.models.js";
 
 import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 
-dotenv.config("../../../.env");
+dotenv.config();
+
+console.log("the kafka port is : " + process.env.KAFKA_BROKER_URL);
 
 const kafka = new Kafka({
   clientId: "my-apps",

@@ -3,6 +3,11 @@ import { Kafka } from "kafkajs";
 import { Order } from "../../models/order.models.js";
 import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 
+import dotenv from "dotenv";
+
+dotenv.config();
+console.log("the kafka port is : " + process.env.KAFKA_BROKER_URL);
+
 const kafka = new Kafka({
   clientId: "my-app",
   brokers: [process.env.KAFKA_BROKER_URL || "localhost:9092"],

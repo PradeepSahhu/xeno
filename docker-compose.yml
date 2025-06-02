@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -20,13 +18,38 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_LOG4J_ROOT_LOGLEVEL: "OFF"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: [ "CMD", "kafka-topics", "--bootstrap-server", "localhost:9092", "--list" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  kafka-init:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-init
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      echo 'Creating Kafka topics...'
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic quickstart-events --replication-factor 1 --partitions 3
+      kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic customer-events --replication-factor 1 --partitions 3
+      echo 'Topics created successfully!'
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "
 
   backend:
     build:
       context: ./server
     container_name: backend
     depends_on:
-      - kafka
+      - kafka-init
     environment:
       - KAFKA_BROKER_URL=kafka:9092
     ports:
@@ -34,21 +57,29 @@ services:
 
   kafka-consumer-1:
     build: ./server
-    command: node ./server/Services/kafka/consumer.kafka.js
+    container_name: kafka-consumer-1
+    command: node Services/kafka/consumer.kafka.js
     depends_on:
-      - kafka
+      - kafka-init # Wait for topics to be created
+    environment:
+      - KAFKA_BROKER_URL=kafka:9092
+    restart: unless-stopped
 
   kafka-consumer-2:
     build: ./server
-    command: node ./server/Services/kafka/customerDB-consumer.kafka.js
+    container_name: kafka-consumer-2
+    command: node Services/kafka/customerDB-consumer.kafka.js
     depends_on:
-      - kafka
+      - kafka-init # Wait for topics to be created
+    environment:
+      - KAFKA_BROKER_URL=kafka:9092
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./client
     container_name: frontend
     depends_on:
-      - backend
+      - kafka-init
     ports:
       - "3000:3000"
