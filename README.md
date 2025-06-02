@@ -173,17 +173,18 @@ Runs at http://localhost:4000
 
 ### Customer
 
-| Request Type | Endpoint                     | Description                           |
-| ------------ | ---------------------------- | ------------------------------------- |
-| POST         | `/api/customers/addCustomer` | To Add Customer to the kafka producer |
+| Request Type | Endpoint                        | Description                                            |
+| ------------ | ------------------------------- | ------------------------------------------------------ |
+| POST         | `/api/customers/addCustomer`    | To Add Customer to the kafka producer                  |
+| GET          | `/api/customers/getAllCampaign` | To Add all the customers from the mongo atlas database |
 
 ### Order
 
-| Request Type | Endpoint               | Description                        |
-| ------------ | ---------------------- | ---------------------------------- |
-| POST         | `/api/orders/addOrder` | To Add Order to the kafka producer |
+| Request Type | Endpoint                   | Description                                     |
+| ------------ | -------------------------- | ----------------------------------------------- |
+| POST         | `/api/orders/addOrder`     | To Add Order to the kafka producer              |
+| GET          | `/api/orders/getAllOrders` | To get all orders from the mongo atlas database |
 
 - When these routes are called with the data, the controller validate the data like there is no empty value, email is in correct format and the custoemr with the same email id should not exist.
 - then the controller hit the kafka producer, the kafka producer
 - the kafka producer queues the data and the kafka consumer handles the database insertion operation.
--
