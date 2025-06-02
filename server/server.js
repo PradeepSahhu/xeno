@@ -5,13 +5,15 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { app } from "./app.js";
 import DatabaseConnection from "./utils/DatabaseConnection.utils.js";
 import { connectKafkaProducker } from "./Services/kafka/producker.kafka.js";
-
+import {
+  serilization,
+  deserilization,
+} from "./middleware/passPortSerialization.middleware.js";
 import dotenv from "dotenv";
 import { User } from "./models/users.models.js";
 dotenv.config();
 
 const PORT = 4000;
-// const app = express();
 
 console.log(process.env.GOOGLE_CLIENT_ID);
 
@@ -34,8 +36,6 @@ passport.use(
       callbackURL: "http://localhost:4000/auth/google/callback",
     },
     async (accesstoken, refreshToken, profile, done) => {
-      // can store this data in db.
-
       try {
         console.log(profile);
         let usr = await User.findOne({ googleId: profile.id });
@@ -76,22 +76,24 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => done(null, user._id.toString()));
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    if (user) {
-      return done(null, user);
-    }
-  } catch (error) {
-    console.log(error);
-    done(error, null);
-  }
-});
+passport.serializeUser(serilization);
+passport.deserializeUser(deserilization);
+// passport.serializeUser((user, done) => done(null, user._id.toString()));
+// passport.deserializeUser(async (id, done) => {
+//   try {
+//     const user = await User.findById(id);
+//     if (user) {
+//       return done(null, user);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     done(error, null);
+//   }
+// });
 
-app.get("/", (req, res) => {
-  res.send("<a href='/auth/googles'> Login with google</a>");
-});
+// app.get("/", (req, res) => {
+//   res.send("<a href='/auth/googles'> Login with google</a>");
+// });
 
 app.get(
   "/auth/googles",

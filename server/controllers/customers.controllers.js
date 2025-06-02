@@ -43,6 +43,12 @@ const addCustomer = asyncHandler(async (req, res) => {
   //   createdDate,
   // });
 
+  const existingCustomer = await Customer.findOne({ email: email });
+
+  if (existingCustomer) {
+    return new ApiError(400, "Customer already exist with the same email id");
+  }
+
   const customer = {
     name: name,
     email: email,
@@ -55,11 +61,7 @@ const addCustomer = asyncHandler(async (req, res) => {
     createdDate: createdDate,
   };
 
-  const existingCustomer = await Customer.findOne({ email: email });
-
-  if (existingCustomer) {
-    return new ApiError(400, "Customer already exist with the same email id");
-  }
+  // ---------- Sending it to the kafka producer
 
   await customerProducer(JSON.stringify(customer));
 
@@ -75,4 +77,19 @@ const addCustomer = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Customer Successfully Added"));
 });
 
-export { addCustomer };
+const getAllCustomers = asyncHandler(async (req, res) => {
+  const allCustomers = await Customer.find({});
+
+  if (!allCustomers) {
+    return new ApiError(
+      400,
+      "Something went wrong can't find the customer details"
+    );
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, allCustomers, "Customer Successfully Added"));
+});
+
+export { addCustomer, getAllCustomers };

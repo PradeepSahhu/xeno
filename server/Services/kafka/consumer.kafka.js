@@ -5,7 +5,7 @@ import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 
 const kafka = new Kafka({
   clientId: "my-app",
-  brokers: ["localhost:9092"],
+  brokers: [process.env.KAFKA_BROKER_URL || "localhost:9092"],
 });
 
 const consumer = kafka.consumer({ groupId: "test-group" });

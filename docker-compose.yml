@@ -32,6 +32,18 @@ services:
     ports:
       - "4000:4000"
 
+  kafka-consumer-1:
+    build: ./server
+    command: node ./server/Services/kafka/consumer.kafka.js
+    depends_on:
+      - kafka
+
+  kafka-consumer-2:
+    build: ./server
+    command: node ./server/Services/kafka/customerDB-consumer.kafka.js
+    depends_on:
+      - kafka
+
   frontend:
     build:
       context: ./client

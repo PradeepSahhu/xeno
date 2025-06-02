@@ -17,14 +17,6 @@ app.use(
   })
 );
 
-// app.options(
-//   "/api/",
-//   cors({
-//     origin: "http://localhost:3001",
-//     credentials: true,
-//   })
-// );
-
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 

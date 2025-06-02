@@ -1,12 +1,14 @@
 import { Kafka } from "kafkajs";
-
+import dotenv from "dotenv";
 import { Customer } from "../../models/customer.models.js";
 
 import DatabaseConnection from "../../utils/DatabaseConnection.utils.js";
 
+dotenv.config("../../../.env");
+
 const kafka = new Kafka({
   clientId: "my-apps",
-  brokers: ["localhost:9092"],
+  brokers: [process.env.KAFKA_BROKER_URL || "localhost:9092"],
 });
 
 const consumer = kafka.consumer({ groupId: "customer-consumer-group" });
@@ -14,7 +16,12 @@ const consumer = kafka.consumer({ groupId: "customer-consumer-group" });
 const run = async () => {
   // Consuming
 
-  await DatabaseConnection();
+  console.log(
+    "the database string in consumer is : " +
+      process.env.MONGOOSE_DATABASE_CONNECTION
+  );
+
+  await DatabaseConnection(process.env.MONGOOSE_DATABASE_CONNECTION);
   await consumer.connect();
   await consumer.subscribe({ topic: "customer-events", fromBeginning: true });
 

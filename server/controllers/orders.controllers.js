@@ -33,4 +33,18 @@ const addOrders = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(200, {}, "Successfully ordered"));
 });
 
-export { addOrders };
+const getAllOrders = asyncHandler(async (req, res) => {
+  const order = await Order.find({});
+
+  if (!order) {
+    return new ApiError(400, "There is some problem");
+  }
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(200, order, "Successfully Fetched all the Order records")
+    );
+});
+
+export { addOrders, getAllOrders };
