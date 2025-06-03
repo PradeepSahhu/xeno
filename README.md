@@ -188,3 +188,7 @@ Runs at http://localhost:4000
 - When these routes are called with the data, the controller validate the data like there is no empty value, email is in correct format and the custoemr with the same email id should not exist.
 - then the controller hit the kafka producer, the kafka producer
 - the kafka producer queues the data and the kafka consumer handles the database insertion operation.
+
+The .env file for this project is in the discription of the video share with you guys :
+
+https://youtu.be/yeltYt4fYEM?si=-s4bgbj6NFFDjAGr
